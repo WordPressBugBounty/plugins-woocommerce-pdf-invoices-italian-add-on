@@ -3,7 +3,7 @@
 * Plugin Name: PDF Invoices Italian Add-on for WooCommerce
 * Plugin URI: https://ldav.it/plugin/woocommerce-pdf-invoices-italian-add-on/
 * Description: Aggiunge a WooCommerce tutto il necessario per un e-commerce italiano e la fatturazione elettronica
-* Version: 0.7.7
+* Version: 0.7.7.3
 * Author: laboratorio d'Avanguardia
 * Author URI: https://ldav.it/
 * License: GPLv2 or later
@@ -12,7 +12,7 @@
 * Domain Path: /languages
 * Requires Plugins: woocommerce
 * WC requires at least: 8.0
-* WC tested up to: 10.4.3
+* WC tested up to: 10.7.0
 */
 
 //Thanks to Nicola Mustone https://gist.github.com/SiR-DanieL
@@ -25,7 +25,7 @@ class WooCommerce_Italian_add_on {
 	public static $plugin_url;
 	public static $plugin_path;
 	public static $plugin_basename;
-	public $version = '0.7.7';
+	public $version = '0.7.7.3';
 	protected static $instance = null;
 	
 	public $settings;
@@ -127,20 +127,16 @@ class WooCommerce_Italian_add_on {
 		$update = new WooCommerce_Italian_add_on_Update();
 		$update->test();
 
-		if ( class_exists( 'WPO_WCPDF' ) ) {
-			if(version_compare( WPO_WCPDF()->version, '2.0', '<' ) ) {
+		if ( class_exists( 'WPO_WCPDF' ) && function_exists( "WPO_WCPDF" ) ) {
+			if ( version_compare( WPO_WCPDF()->version, '2.0', '<' ) ) {
 				include_once 'includes/class-wcpdf-integration.php';
-			} elseif(version_compare( WPO_WCPDF()->version, '2.7', '<' ) ) {
+			} elseif ( version_compare( WPO_WCPDF()->version, '2.7', '<' ) ) {
 				include_once 'includes/class-wcpdf-integration2.php';
 			} else {
 				include_once 'includes/class-wcpdf-integration3.php';
 			}
-/*
-		} else {
-			add_action( 'admin_notices', array ( $this, 'check_wpo_wcpdf' ) );
-*/
 		}
-	}
+		}
 
 	// thanks to Andrea Grillo, YITHemes member
 	public function get_order_address($address, $type, $order){
@@ -148,9 +144,9 @@ class WooCommerce_Italian_add_on {
 		 * Filter get address method for WC_Order
 		 *
 		 * @author Andrea Grillo <info@andreagrillo.it>
-		 * @param array $address
-		 * @param string $type
-		 * @param \WC_Order $order
+		 * @param array address
+		 * @param string type
+		 * @param \WC_Order order
 		 * @return array
 	 */
 		if( 'billing' == $type ){
